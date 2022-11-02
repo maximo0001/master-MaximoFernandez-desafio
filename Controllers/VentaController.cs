@@ -9,9 +9,9 @@ namespace WebApplication1.Controllers
     public class VentaController
     {
         [HttpPost]
-        public void Agregar([FromBody] List<Producto> prod, int id)
+        public void Agregar([FromBody] Venta ven)
         {
-            ADO_Venta.AgregarVenta(prod,id);
+            ADO_Venta.AgregarVenta(ven);
         }
     }
 }

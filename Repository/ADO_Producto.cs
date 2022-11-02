@@ -49,7 +49,7 @@ namespace WebApplication1.Repository
                 cmd.Parameters.Add(paramPrecioVenta);
                 cmd.Parameters.Add(paramStock);
                 cmd.Parameters.Add(paramIdUsuario);
-
+                
                 cmd.ExecuteNonQuery();
                 connection.Close();
             }

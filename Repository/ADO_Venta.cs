@@ -7,26 +7,35 @@ namespace WebApplication1.Repository
 {
     public class ADO_Venta
     {
-        public static void AgregarVenta(List<Producto> prod, int id)
+        public static void AgregarVenta(Venta ven)
         {
+            int idInsertado;
             using (SqlConnection connection = new SqlConnection(General.connectionString()))
             {
                 connection.Open();
 
                 SqlCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO Venta(idUsuario) VALUES(@idUsu)";
+                cmd.CommandText = "INSERT INTO Venta(comentarios,idUsuario) VALUES(@com,@idUsu) " +
+                   "select @@IDENTITY";
+
+                var paramCom = new SqlParameter();
+                paramCom.ParameterName = "com";
+                paramCom.SqlDbType = SqlDbType.VarChar;
+                paramCom.Value = ven.Comentarios;
 
                 var param = new SqlParameter();
                 param.ParameterName = "idUsu";
                 param.SqlDbType = SqlDbType.BigInt;
-                param.Value = id;
-
+                param.Value = ven.IdUsuario;
+                
+                cmd.Parameters.Add(paramCom);
                 cmd.Parameters.Add(param);
-                cmd.ExecuteNonQuery();
+                
+                idInsertado = Convert.ToInt32(cmd.ExecuteScalar());
                 connection.Close();
             }
 
-            foreach (var p in prod)
+            foreach (var p in ven.Productos)
             {
                 using (SqlConnection connection = new SqlConnection(General.connectionString()))
                 {
@@ -48,8 +57,7 @@ namespace WebApplication1.Repository
                     var paramIdVenta = new SqlParameter();
                     paramIdVenta.ParameterName = "idVenta";
                     paramIdVenta.SqlDbType = SqlDbType.BigInt;
-                    paramIdVenta.Value = ;
-
+                    paramIdVenta.Value = idInsertado;
 
                     cmd.Parameters.Add(paramStock);
                     cmd.Parameters.Add(paramIdProducto);
@@ -71,10 +79,14 @@ namespace WebApplication1.Repository
                     paramStock.Value = p.Stock;
 
                     var paramIdProducto = new SqlParameter();
-                    paramIdProducto.ParameterName = "idProducto";
+                    paramIdProducto.ParameterName = "idProd";
                     paramIdProducto.SqlDbType = SqlDbType.BigInt;
                     paramIdProducto.Value = p.Id;
 
+                    cmd.Parameters.Add(paramIdProducto);
+                    cmd.Parameters.Add(paramStock);
+
+                    cmd.ExecuteNonQuery();
                     connection.Close(); 
                 }
             }

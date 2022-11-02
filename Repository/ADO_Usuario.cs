@@ -130,6 +130,7 @@ namespace WebApplication1.Repository
 
         internal static void AgregarUsuario(Usuario usu)
         {
+
             using (SqlConnection connection = new SqlConnection(General.connectionString()))
             {
                 connection.Open();
